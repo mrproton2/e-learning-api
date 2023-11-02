@@ -1,34 +1,31 @@
 ﻿using e_learning.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using System.Data;
 
 namespace e_learning.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class dataController : ControllerBase
+    public class addSubStreamController : ControllerBase
     {
-
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _env;
 
-        public dataController(IConfiguration configuration, IWebHostEnvironment env)
+        public addSubStreamController(IConfiguration configuration, IWebHostEnvironment env)
         {
             _configuration = configuration;
             _env = env;
         }
 
-        [Route("getstream")]
+        [Route("getsubstream")]
         [HttpGet]
         public JsonResult Get()
         {
-            string query = @"select * from dbo.addstream ORDER BY addstream_pk DESC";
+            string query = @"select * from dbo.addsubstream ORDER BY addsubstream_pk DESC";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
@@ -48,22 +45,47 @@ namespace e_learning.Controllers
 
             return new JsonResult(table);
         }
-
-        [Route("addstream")]
-
-        [HttpPost]
-        public JsonResult Post([FromBody] addStream objaddStream )
-            {
+        [HttpDelete("{addsubstream_pk}")]
+        public JsonResult Delete(int addsubstream_pk)
+        {
             string query = @"
-                    insert into dbo.addstream 
-                    (stream_name,creation_date,status,createddate,createdby)
+                    delete from dbo.addsubstream
+                    where addsubstream_pk = " + addsubstream_pk + @" 
+                    ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader); ;
+
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+            return new JsonResult("Deleted Successfully");
+        }
+
+        [Route("addsubstream")]
+        [HttpPost]
+        public JsonResult Post([FromBody] addSubStream objaddSubStream)
+        {
+            string query = @"
+                    insert into dbo.addsubstream 
+                    (select_stream_name,sub_stream_name,fees,creation_date,status,createddate,createdby)
                     values 
                     (
-                    '" + objaddStream.stream_name + @"'
-                    ,'" + objaddStream.creation_date + @"'
-                    ,'" + objaddStream.status + @"'
-                    ,'" + objaddStream.createddate + @"'
-                     ,'" + objaddStream.createdby + @"'
+                    '" + objaddSubStream.select_stream_name + @"'
+                    ,'" + objaddSubStream.sub_stream_name + @"'
+                    ,'" + objaddSubStream.fees + @"'
+                    ,'" + objaddSubStream.creation_date + @"'
+                    ,'" + objaddSubStream.status + @"'
+                    ,'" + objaddSubStream.createddate + @"'
+                     ,'" + objaddSubStream.createdby + @"'
                      
                     )
                     ";
@@ -84,79 +106,19 @@ namespace e_learning.Controllers
             return new JsonResult("added successfully");
 
         }
-        //[Route("xyz")]
-
-        //[HttpPost]
-        //public JsonResult create(addStream objaddStream)
-        //{
-        //    string query = @"
-        //            insert into dbo.addstream 
-        //            (stream_name,creation_date,status,createddate,createdby)
-        //            values 
-        //            (
-        //            '" + objaddStream.addsubstream + @"'
-        //            ,'" + objaddStream.doc + @"'
-        //            ,'" + objaddStream.status + @"'
-        //            ,'" + objaddStream.createddate + @"'
-        //             ,'" + objaddStream.createdby + @"'
-
-        //            )
-        //            ";
-        //    DataTable table = new DataTable();
-        //    string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
-        //    SqlDataReader myReader;
-        //    using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-        //    {
-        //        myCon.Open();
-        //        using (SqlCommand myCommand = new SqlCommand(query, myCon))
-        //        {
-        //            myReader = myCommand.ExecuteReader();
-        //            table.Load(myReader);
-        //            myReader.Close();
-        //            myCon.Close();
-        //        }
-        //    }
-        //    return new JsonResult("added successfully");
-
-        //}
-
-        [HttpDelete("{addstream_pk}")]
-        public JsonResult Delete(int addstream_pk)
-        {
-            string query = @"
-                    delete from dbo.addstream
-                    where addstream_pk = " + addstream_pk + @" 
-                    ";
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader); ;
-
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
-            return new JsonResult("Deleted Successfully");
-        }
-
-
-        [Route("update")]
+        [Route("updatesubstream")]
         [HttpPut]
-        public JsonResult Put(addStream objupdateStream)
+        public JsonResult Put(addSubStream objaddSubStream)
         {
             string query = @"
-                    update dbo.addstream set 
-                    stream_name = '" + objupdateStream.stream_name + @"'
-                    ,creation_date = '" + objupdateStream.creation_date + @"'
-                    ,status = '" + objupdateStream.status + @"'
-
-                    where addstream_pk = '" + objupdateStream.addstream_pk + @"'
+                    update dbo.addsubstream set 
+                    select_stream_name = '" + objaddSubStream.select_stream_name + @"'
+                    ,sub_stream_name = '" + objaddSubStream.sub_stream_name + @"'
+                    ,fees = '" + objaddSubStream.fees + @"'
+                    ,creation_date = '" + objaddSubStream.creation_date + @"'
+                    ,status = '" + objaddSubStream.status + @"'
+                    
+                    where addsubstream_pk = '" + objaddSubStream.addsubstream_pk + @"'
                     ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
@@ -179,7 +141,31 @@ namespace e_learning.Controllers
 
 
 
+        [Route("getstream")]
+        [HttpGet]
+        public JsonResult getstream()
+        {
+            string query = @"select addstream_pk,stream_name from addstream";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader); ;
+
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
+
     }
-
+    
 }
-

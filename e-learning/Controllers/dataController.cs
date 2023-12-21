@@ -50,7 +50,6 @@ namespace e_learning.Controllers
         }
 
         [Route("addstream")]
-
         [HttpPost]
         public JsonResult Post([FromBody] addStream objaddStream )
             {

@@ -10,22 +10,22 @@ namespace e_learning.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class addSubStreamController : ControllerBase
+    public class InquiryFormController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _env;
 
-        public addSubStreamController(IConfiguration configuration, IWebHostEnvironment env)
+        public InquiryFormController(IConfiguration configuration, IWebHostEnvironment env)
         {
             _configuration = configuration;
             _env = env;
         }
 
-        [Route("getsubstream")]
+        [Route("InquiryFormData")]
         [HttpGet]
         public JsonResult Get()
         {
-            string query = @"select * from dbo.addsubstream ORDER BY addsubstream_pk DESC";
+            string query = @"select * from dbo.addinquiry  ORDER BY addinquiry_pk DESC";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
@@ -45,50 +45,34 @@ namespace e_learning.Controllers
 
             return new JsonResult(table);
         }
-        [HttpDelete("{addsubstream_pk}")]
-        public JsonResult Delete(int addsubstream_pk)
-        {
-            string query = @"
-                    delete from dbo.addsubstream
-                    where addsubstream_pk = " + addsubstream_pk + @" 
-                    ";
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader); ;
 
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
-            return new JsonResult("Deleted Successfully");
-        }
 
-        [Route("addsubstream")]
+        [Route("addInquiryForm")]
         [HttpPost]
-        public JsonResult Post([FromBody] addSubStream objaddSubStream)
+        public JsonResult Post([FromBody] addInquiry objaddInquiryForm)
         {
             string query = @"
-                    insert into dbo.addsubstream 
-                    (sub_stream_name,fees,creation_date,status,createddate,createdby,stream_pk)
+                    insert into dbo.addinquiry 
+                    (name,date,address,contact_no,email_id,gender,
+                    date_of_birth,previous_qualification,
+                    school_college_name,stream_name,substream_name,createddate,createdby)
                     values 
                     (
-                    '" + objaddSubStream.sub_stream_name + @"'
-                    ,'" + objaddSubStream.fees + @"'
-                    ,'" + objaddSubStream.creation_date + @"'
-                    ,'" + objaddSubStream.status + @"'
                     
-                    ,'" + objaddSubStream.createddate + @"'
-                     ,'" + objaddSubStream.createdby + @"'
-                    ,'" + objaddSubStream.stream_pk + @"'
-
-
+                    '" + objaddInquiryForm.name + @"'
+                    ,'" + objaddInquiryForm.date + @"'
+                    ,'" + objaddInquiryForm.address + @"'
+                    ,'" + objaddInquiryForm.contact_no + @"'
+                    ,'"+ objaddInquiryForm.email_id+ @"'
+                    ,'"+ objaddInquiryForm.gender+ @"'
+                    ,'"+ objaddInquiryForm.date_of_birth+ @"'
+                    ,'"+ objaddInquiryForm.previous_qualification+ @"'
+                    ,'"+ objaddInquiryForm.school_college_name+ @"'
+                    ,'"+ objaddInquiryForm.stream_name+ @"'
+                    ,'"+ objaddInquiryForm.substream_name+ @"'
+                    ,'"+ objaddInquiryForm.createddate+ @"'
+                    ,'"+ objaddInquiryForm.createdby+ @"'
+                  
                      
                     )
                     ";
@@ -100,29 +84,35 @@ namespace e_learning.Controllers
                 myCon.Open();
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    myReader = myCommand.ExecuteReader();
+                        myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
                     myReader.Close();
                     myCon.Close();
                 }
             }
             return new JsonResult("added successfully");
-
         }
 
-        [Route("updatesubstream")]
+        [Route("updateinquiryform")]
         [HttpPut]
-        public JsonResult Put(addSubStream objaddSubStream)
+        public JsonResult Put(addInquiry objaddInquiryForm)
         {
             string query = @"
-                    update dbo.addsubstream set 
+                    update dbo.addinquiry set 
+                    name = '" + objaddInquiryForm.name + @"'
+                    ,date = '" + objaddInquiryForm.date + @"'
+                    ,address = '" + objaddInquiryForm.address + @"'
+                     ,contact_no = '" + objaddInquiryForm.contact_no + @"'
+                    ,email_id = '" + objaddInquiryForm.email_id + @"'
+                     ,gender = '" + objaddInquiryForm.gender + @"'
+                    ,date_of_birth = '" + objaddInquiryForm.date_of_birth + @"'
+                     ,previous_qualification = '" + objaddInquiryForm.previous_qualification + @"'
                     
-                    ,sub_stream_name = '" + objaddSubStream.sub_stream_name + @"'
-                    ,fees = '" + objaddSubStream.fees + @"'
-                    ,creation_date = '" + objaddSubStream.creation_date + @"'
-                    ,status = '" + objaddSubStream.status + @"'
-                    
-                    where addsubstream_pk = '" + objaddSubStream.addsubstream_pk + @"'
+                    ,school_college_name = '" + objaddInquiryForm.school_college_name + @"'
+                    ,stream_name = '" + objaddInquiryForm.stream_name + @"'
+                    ,substream_name = '" + objaddInquiryForm.substream_name + @"'
+    
+                    where addinquiry_pk = '" + objaddInquiryForm.addinquiry_pk + @"'
                     ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
@@ -143,15 +133,13 @@ namespace e_learning.Controllers
             return new JsonResult("Updated Successfully");
         }
 
-
-
-
-        [Route("getstream")]
-        [HttpGet]
-        public JsonResult getstream()
+        [HttpDelete("{addinquiry_pk}")]
+        public JsonResult Delete(int addinquiry_pk)
         {
-            string query = @"select addstream_pk,stream_name from addstream";
-
+            string query = @"
+                    delete from dbo.addinquiry
+                    where addinquiry_pk = " + addinquiry_pk + @" 
+                    ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
             SqlDataReader myReader;
@@ -167,10 +155,8 @@ namespace e_learning.Controllers
                     myCon.Close();
                 }
             }
-
-            return new JsonResult(table);
+            return new JsonResult("Deleted Successfully");
         }
 
     }
-    
 }

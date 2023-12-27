@@ -50,7 +50,7 @@ namespace e_learning.Controllers
         [Route("addInquiryForm")]
         [HttpPost]
         public JsonResult Post([FromBody] addInquiry objaddInquiryForm)
-        {
+            {
             string query = @"
                     insert into dbo.addinquiry 
                     (name,date,address,contact_no,email_id,gender,

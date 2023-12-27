@@ -171,6 +171,45 @@ namespace e_learning.Controllers
             return new JsonResult(table);
         }
 
+
+
+
+        [Route("addsubject")]
+        [HttpPost]
+        public JsonResult Post([FromBody] AddSubjectModel objaddsubject)
+        {
+            string query = @"
+                    insert into dbo.addsubject 
+                    (substream_pk,subjects,status,createddate,createdby)
+                    values 
+                    (
+                    (
+                    '" + objaddsubject.substream_pk + @"'
+               
+                    ,'" + objaddsubject.status + @"'
+                    ,'" + objaddsubject.createddate + @"'
+                     ,'" + objaddsubject.createdby + @"'  
+                
+                    )
+                    ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+            return new JsonResult("added successfully");
+
+        }
+
     }
     
 }

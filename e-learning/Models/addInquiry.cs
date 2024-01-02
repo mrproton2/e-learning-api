@@ -1,4 +1,8 @@
-﻿namespace e_learning.Models
+﻿using System;
+using System.ComponentModel;
+using System.Numerics;
+
+namespace e_learning.Models
 {
     public class addInquiry
     {

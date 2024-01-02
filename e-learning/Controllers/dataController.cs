@@ -51,18 +51,18 @@ namespace e_learning.Controllers
 
         [Route("addstream")]
         [HttpPost]
-        public JsonResult Post([FromBody] addStream objaddStream )
+        public JsonResult Post([FromBody] addStream objfaculty )
             {
             string query = @"
                     insert into dbo.addstream 
                     (stream_name,creation_date,status,createddate,createdby)
                     values 
                     (
-                    '" + objaddStream.stream_name + @"'
-                    ,'" + objaddStream.creation_date + @"'
-                    ,'" + objaddStream.status + @"'
-                    ,'" + objaddStream.createddate + @"'
-                     ,'" + objaddStream.createdby + @"'
+                    '" + objfaculty.stream_name + @"'
+                    ,'" + objfaculty.creation_date + @"'
+                    ,'" + objfaculty.status + @"'
+                    ,'" + objfaculty.createddate + @"'
+                     ,'" + objfaculty.createdby + @"'
                      
                     )
                     ";
@@ -86,18 +86,18 @@ namespace e_learning.Controllers
         //[Route("xyz")]
 
         //[HttpPost]
-        //public JsonResult create(addStream objaddStream)
+        //public JsonResult create(addStream objfaculty)
         //{
         //    string query = @"
         //            insert into dbo.addstream 
         //            (stream_name,creation_date,status,createddate,createdby)
         //            values 
         //            (
-        //            '" + objaddStream.addsubstream + @"'
-        //            ,'" + objaddStream.doc + @"'
-        //            ,'" + objaddStream.status + @"'
-        //            ,'" + objaddStream.createddate + @"'
-        //             ,'" + objaddStream.createdby + @"'
+        //            '" + objfaculty.addsubstream + @"'
+        //            ,'" + objfaculty.doc + @"'
+        //            ,'" + objfaculty.status + @"'
+        //            ,'" + objfaculty.createddate + @"'
+        //             ,'" + objfaculty.createdby + @"'
 
         //            )
         //            ";

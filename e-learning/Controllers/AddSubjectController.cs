@@ -69,11 +69,38 @@ namespace e_learning.Controllers
         public JsonResult Get()
         {
             string query = @"select abatch.batch_name,
-asubject.subjects,
-asubstream.sub_stream_name
-from addbatch as abatch 
-left join addsubject as asubject on abatch.substream_pk=asubject.substream_pk
-join addsubstream as asubstream on asubstream.addsubstream_pk=abatch.substream_pk";
+                asubject.subjects,
+                asubstream.sub_stream_name
+                from addbatch as abatch 
+                left join addsubject as asubject on abatch.substream_pk=asubject.substream_pk
+                join addsubstream as asubstream on asubstream.addsubstream_pk=abatch.substream_pk";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader); ;
+
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
+
+
+
+        [Route("subjecttableget")]
+        [HttpGet]
+        public JsonResult GetJson()
+        {
+            string query = @"select * from dbo.addsubject ORDER BY subject_pk DESC";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
@@ -96,4 +123,7 @@ join addsubstream as asubstream on asubstream.addsubstream_pk=abatch.substream_p
 
 
     }
+
+
+
 }

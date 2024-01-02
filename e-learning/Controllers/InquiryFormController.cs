@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 using System.Data;
+using System;
 
 namespace e_learning.Controllers
 {
@@ -84,7 +85,7 @@ namespace e_learning.Controllers
                 myCon.Open();
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                        myReader = myCommand.ExecuteReader();
+                            myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
                     myReader.Close();
                     myCon.Close();

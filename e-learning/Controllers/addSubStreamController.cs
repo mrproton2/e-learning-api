@@ -116,12 +116,10 @@ namespace e_learning.Controllers
         {
             string query = @"
                     update dbo.addsubstream set 
-                    
-                    ,sub_stream_name = '" + objaddSubStream.sub_stream_name + @"'
+                    sub_stream_name = '" + objaddSubStream.sub_stream_name + @"'
                     ,fees = '" + objaddSubStream.fees + @"'
                     ,creation_date = '" + objaddSubStream.creation_date + @"'
-                    ,status = '" + objaddSubStream.status + @"'
-                    
+                    ,status = '" + objaddSubStream.status + @"'      
                     where addsubstream_pk = '" + objaddSubStream.addsubstream_pk + @"'
                     ";
             DataTable table = new DataTable();

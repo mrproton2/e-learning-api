@@ -34,14 +34,12 @@ namespace e_learning.Controllers
                     insert into dbo.addsubject 
                     (substream_pk,subjects,status,createddate,createdby)
                     values 
-                    
                     (
                     '" + objaddsubject.substream_pk + @"'
                     ,'" + subname.subjectname + @"'
                     ,'" + objaddsubject.status + @"'
                     ,'" + objaddsubject.createddate + @"'
                     ,'" + objaddsubject.createdby + @"'  
-                
                     )
                     ";
            
@@ -68,12 +66,12 @@ namespace e_learning.Controllers
         [HttpGet]
         public JsonResult Get()
         {
-            string query = @"select abatch.batch_name,
-                asubject.subjects,
-                asubstream.sub_stream_name
-                from addbatch as abatch 
-                left join addsubject as asubject on abatch.substream_pk=asubject.substream_pk
-                join addsubstream as asubstream on asubstream.addsubstream_pk=abatch.substream_pk";
+                string query = @"select abatch.batch_name,
+                    asubject.subjects,
+                    asubstream.sub_stream_name
+                    from addbatch as abatch 
+                    left join addsubject as asubject on abatch.substream_pk=asubject.substream_pk
+                    join addsubstream as asubstream on asubstream.addsubstream_pk=abatch.substream_pk";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");

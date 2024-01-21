@@ -22,6 +22,7 @@
         public string fifsc_code { get; set; }
         public string createddate { get; set; }
         public string createdby { get; set; }
+        public string fsubstream { get; set; }
 
     }
 }

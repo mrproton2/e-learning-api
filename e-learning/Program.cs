@@ -22,5 +22,6 @@ namespace e_learning
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
     }
 }

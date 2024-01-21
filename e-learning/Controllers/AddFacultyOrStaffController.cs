@@ -30,7 +30,7 @@ namespace e_learning.Controllers
             string query = @"
                     insert into dbo.addfaculty 
                     (name,dob,address,contact,emailid,gender,qualification,experience,teaching_other_institute,
-                    pan_no,aadhar_no,tsd_no,per_hour_amount,accout_no,ifsc_code,createddate,createdby,subject_pk)
+                    pan_no,aadhar_no,tsd_no,per_hour_amount,accout_no,ifsc_code,createddate,createdby,subject_pk,substream_pk)
                     values 
                     (
                     '" + objfaculty.fname + @"'
@@ -51,6 +51,7 @@ namespace e_learning.Controllers
                     ,'" + objfaculty.createddate + @"'
                     ,'" + objfaculty.createdby + @"'
                     ,'" + objfaculty.fsubject + @"'
+                     ,'" + objfaculty.fsubstream + @"'
                      
                     )
                     ";

@@ -127,8 +127,6 @@ namespace e_learning.Controllers
             objclassForm.FileName = record.FileName;
             objclassForm.FileExtension = record.FileFormat;
             objclassForm.MimeType = record.ContentType;
-
-            
             string query = @"
                     insert into dbo.class_profile 
                     (classname,date_of_creation,slogan,branchname,address,

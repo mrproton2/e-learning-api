@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Helper\" />
+    <Folder Include="wwwroot2\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

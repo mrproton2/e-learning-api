@@ -27,6 +27,7 @@ namespace e_learning.Controllers
     {
 
         private readonly IMailService mailService;
+      
        
 
         private readonly IConfiguration _configuration;
@@ -116,23 +117,25 @@ namespace e_learning.Controllers
         }
 
 
-        [HttpPost("generateIDpassword")]
+       [HttpPost("generateIDpassword")]
         public async Task<IActionResult> SendMall(StudentIDPasswordModel objaadmissionForm)
-        {
+            {
 
-            string firstNamePrefix = objaadmissionForm.studentname.Length >= 3 ? objaadmissionForm.studentname.Substring(0, 4) : objaadmissionForm.studentname;
-            var username = $"{firstNamePrefix.ToLower()}{objaadmissionForm.studentcontactno.ToLower()}";
-            string password = GenerateRandomPassword();
+            string firstNamePrefix = objaadmissionForm.studentname.Length >= 3 ? objaadmissionForm.studentname.Substring(0, 2) : objaadmissionForm.studentname;
+            var user_name = $"{firstNamePrefix.ToLower()}{objaadmissionForm.studentcontactno.ToLower()}";
+            string user_password = GenerateRandomPassword();
             string query = @"
-                    insert into dbo.studentIDPass_details 
-                    (username,password,studentcontactno,createddate,admissionid_pk)
-                    values 
+                    insert into dbo.users 
+                    (user_name,user_password,admissionid_pk,batchName,idpassflag,RoleID,contact)
+                    values  
                     (
-                    '" + username + @"'
-                    ,'" + password + @"'
-                    ,'" + objaadmissionForm.studentcontactno + @"'
-                    ,'" + objaadmissionForm.createddate + @"'   
+                    '" + user_name + @"'
+                    ,'" + user_password + @"'
                     ,'" + objaadmissionForm.admissionid_pk + @"' 
+                    ,'" + objaadmissionForm.batchName + @"'
+                    ,'" + objaadmissionForm.idpassflag + @"' 
+                    ,'" + objaadmissionForm.RoleID + @"'
+                    ,'" + objaadmissionForm.studentcontactno + @"'                   
                     )
                     ";
             DataTable table = new DataTable();
@@ -152,11 +155,11 @@ namespace e_learning.Controllers
 
 
 
-            generatepdf(objaadmissionForm);
-               MailRequest mailRequest= new MailRequest();
+           
+            MailRequest mailRequest= new MailRequest();
             mailRequest.ToEmail = objaadmissionForm.studentemail;
             mailRequest.Subject = "Your ID password";
-            mailRequest.Body = $"Your User ID is {username} And Your Password is {password}.";
+            mailRequest.Body = $"Your User ID is {user_name} And Your Password is {user_password}.";
            
             await mailService.SendEmailAsync(mailRequest);
             return Ok();
@@ -178,80 +181,161 @@ namespace e_learning.Controllers
             return password.ToString();
         }
 
-        [Route("generatepdf")]
-        [HttpGet]
-        public async Task<IActionResult> generatepdf(StudentIDPasswordModel objaadmissionForm)
+
+
+
+
+
+        [HttpPost("generateparentsIDpassword")]
+        public async Task<IActionResult> ParentsIDpass(StudentIDPasswordModel objaadmissionForm)
         {
-            var document = new PdfDocument();
-            string htmlcontent = "<html";
-            htmlcontent += "<head>";
-            htmlcontent += " <style>";
-            htmlcontent += "    body {font-family: Arial, sans-serif;}";
-            htmlcontent += "   .container {width: 100%;margin: 2px ;border: 2px solid #000;padding: 10px;border-radius: 5px;}";
-            htmlcontent += " .header {text-align: center;font-size: 12px;font-weight: bold;}";
-            htmlcontent += "    .box {border: 1px solid #000;padding: 2px;}";
-            htmlcontent += "   .box-header {font-size: 8px;font-weight: bold;}";
-            htmlcontent += " </style>";
-            htmlcontent += "<title>Invoice</title>";
-            htmlcontent += "</head>";
-            htmlcontent += "<body>";
-            htmlcontent += "  <div class='container'> ";
-            htmlcontent += "    <div class='header'>Invoice</div>";
-            htmlcontent += " <div class='box'>";
 
-            htmlcontent += "      <div class=content'>";
-            htmlcontent += "        <p><strong>Class Name:</strong> National classes</p>";
-            htmlcontent += "        <p><strong>Address:</strong> Ghatkopar east</p>";
-            htmlcontent += "        <p><strong>Contact Number:</strong>9326196417</p>";
-            htmlcontent += "      </div>";
-            htmlcontent += "    </div>";
-            htmlcontent += "  <div class='box'>";
-
-            htmlcontent += " <div class='content'>";
-            htmlcontent += "<p><strong>Student Name:</strong>" + objaadmissionForm.studentname + "</p>";
-            htmlcontent += "    <p><strong>Date of Birth:</strong> " + objaadmissionForm.dob + "</p>";
-            htmlcontent += "   <p><strong>Address:</strong>" + objaadmissionForm.address + "</p>";
-            htmlcontent += "  <p><strong>Contact Number:</strong> " + objaadmissionForm.studentcontactno + "</p>";
-            htmlcontent += "  <p><strong>Email ID:</strong>" + objaadmissionForm.studentemail + "</p>";
-            htmlcontent += "     <p><strong>Gender:</strong> " + objaadmissionForm.gender + "</p>";
-            htmlcontent += "  <p><strong>Aadhar Card Number:</strong> " + objaadmissionForm.studentaadharno + "</p>";
-            htmlcontent += "  <p><strong>Parents Name:</strong> " + objaadmissionForm.parentName + "</p>";
-            htmlcontent += "  <p><strong>Parents Contact Number:</strong> " + objaadmissionForm.parentcontactNo + "</p>";
-            htmlcontent += "    <p><strong>Substream Name:</strong> " + objaadmissionForm.substream_name + "</p>";
-            htmlcontent += "    <p><strong>Batch Name:</strong> " + objaadmissionForm.batchName + "</p>";
-            htmlcontent += "   <p><strong>Date of Admission:</strong> " + objaadmissionForm.dateofadmission + "</p>";
-            htmlcontent += "   </div>";
-            htmlcontent += "  </div>";
-            htmlcontent += "    <div class='box'>";
-            htmlcontent += "    <div class='content'>";
-            htmlcontent += "      <p><strong>Total Fees of Course:</strong>" + objaadmissionForm.totalFees + "</p>";
-            htmlcontent += "      <p><strong>Discount %:</strong> " + objaadmissionForm.discount + "%</p>";
-            htmlcontent += "       <p><strong>GST:</strong> 18%</p>";
-            htmlcontent += "       <p><strong>Fees under GST:</strong> " + objaadmissionForm.feeswithgst + "</p>";
-            htmlcontent += "       <p><strong>Total Payable Amount:</strong> " + objaadmissionForm.payableamount + "</p>";
-            htmlcontent += "        <p><strong>Type of Payment:</strong> " + objaadmissionForm.paymentType + "</p>";
-            htmlcontent += "       <p><strong>Installment Amount and Date:</strong> " + objaadmissionForm.address + "</p>";
-            htmlcontent += "       <p><strong>Payment Mode:</strong> " + objaadmissionForm.paymentMode + "</p>";
-            htmlcontent += "        <p><strong>Paying Amount:</strong>" + objaadmissionForm.Payingamount + "</p>";
-            htmlcontent += "      </div>";
-            htmlcontent += "   </div>";
-            htmlcontent += "  </div>";
-            htmlcontent += "</body>";
-            htmlcontent += "</html>";
-
-            PdfGenerator.AddPdfPages(document, htmlcontent, PageSize.A4);
-            byte[]? response = null;
-            using (MemoryStream ms = new MemoryStream())
+            string firstNamePrefix = objaadmissionForm.parentName.Length >= 3 ? objaadmissionForm.parentName.Substring(0, 2) : objaadmissionForm.parentName;
+            var user_name = $"{firstNamePrefix.ToLower()}{objaadmissionForm.parentcontactNo.ToLower()}";
+            string user_password = GenerateRandomPassword();
+            string query = @"
+                    insert into dbo.users 
+                    (user_name,user_password,admissionid_pk,batchName,idpassflag,RoleID,contact)
+                    values  
+                    (
+                    '" + user_name + @"'
+                    ,'" + user_password + @"'
+                    ,'" + objaadmissionForm.admissionid_pk + @"' 
+                    ,'" + objaadmissionForm.batchName + @"'
+                    ,'" + objaadmissionForm.idpassflag + @"' 
+                     ,'" + objaadmissionForm.RoleIDParents + @"'
+                    ,'" + objaadmissionForm.parentcontactNo + @"'                   
+                    )
+                    ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
             {
-                document.Save(ms);
-                response = ms.ToArray();
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
             }
-            string FileName = "invoice" + ".pdf";
-        
-            return File(response, "application/pdf", FileName);
+            MailRequest mailRequest = new MailRequest();
+            mailRequest.ToEmail = objaadmissionForm.parentemail;
+            mailRequest.Subject = "Your ID password";
+            mailRequest.Body = $"Your User ID is {user_name} And Your Password is {user_password}.";
 
+            await mailService.SendEmailAsync(mailRequest);
+            return Ok();
 
         }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //[Route("generatepdf")]
+        //[HttpGet]
+        //public async Task<IActionResult> generatepdf(StudentIDPasswordModel objaadmissionForm)
+        //{
+        //    var document = new PdfDocument();
+        //    string htmlcontent = "<html";
+        //    htmlcontent += "<head>";
+        //    htmlcontent += " <style>";
+        //    htmlcontent += "    body {font-family: Arial, sans-serif;}";
+        //    htmlcontent += "   .container {width: 100%;margin: 2px ;border: 2px solid #000;padding: 10px;border-radius: 5px;}";
+        //    htmlcontent += " .header {text-align: center;font-size: 12px;font-weight: bold;}";
+        //    htmlcontent += "    .box {border: 1px solid #000;padding: 2px;}";
+        //    htmlcontent += "   .box-header {font-size: 8px;font-weight: bold;}";
+        //    htmlcontent += " </style>";
+        //    htmlcontent += "<title>Invoice</title>";
+        //    htmlcontent += "</head>";
+        //    htmlcontent += "<body>";
+        //    htmlcontent += "  <div class='container'> ";
+        //    htmlcontent += "    <div class='header'>Invoice</div>";
+        //    htmlcontent += " <div class='box'>";
+
+        //    htmlcontent += "      <div class=content'>";
+        //    htmlcontent += "        <p><strong>Class Name:</strong> National classes</p>";
+        //    htmlcontent += "        <p><strong>Address:</strong> Ghatkopar east</p>";
+        //    htmlcontent += "        <p><strong>Contact Number:</strong>9326196417</p>";
+        //    htmlcontent += "      </div>";
+        //    htmlcontent += "    </div>";
+        //    htmlcontent += "  <div class='box'>";
+
+        //    htmlcontent += " <div class='content'>";
+        //    htmlcontent += "<p><strong>Student Name:</strong>" + objaadmissionForm.studentname + "</p>";
+        //    htmlcontent += "    <p><strong>Date of Birth:</strong> " + objaadmissionForm.dob + "</p>";
+        //    htmlcontent += "   <p><strong>Address:</strong>" + objaadmissionForm.address + "</p>";
+        //    htmlcontent += "  <p><strong>Contact Number:</strong> " + objaadmissionForm.studentcontactno + "</p>";
+        //    htmlcontent += "  <p><strong>Email ID:</strong>" + objaadmissionForm.studentemail + "</p>";
+        //    htmlcontent += "     <p><strong>Gender:</strong> " + objaadmissionForm.gender + "</p>";
+        //    htmlcontent += "  <p><strong>Aadhar Card Number:</strong> " + objaadmissionForm.studentaadharno + "</p>";
+        //    htmlcontent += "  <p><strong>Parents Name:</strong> " + objaadmissionForm.parentName + "</p>";
+        //    htmlcontent += "  <p><strong>Parents Contact Number:</strong> " + objaadmissionForm.parentcontactNo + "</p>";
+        //    htmlcontent += "    <p><strong>Substream Name:</strong> " + objaadmissionForm.substream_name + "</p>";
+        //    htmlcontent += "    <p><strong>Batch Name:</strong> " + objaadmissionForm.batchName + "</p>";
+        //    htmlcontent += "   <p><strong>Date of Admission:</strong> " + objaadmissionForm.dateofadmission + "</p>";
+        //    htmlcontent += "   </div>";
+        //    htmlcontent += "  </div>";
+        //    htmlcontent += "    <div class='box'>";
+        //    htmlcontent += "    <div class='content'>";
+        //    htmlcontent += "      <p><strong>Total Fees of Course:</strong>" + objaadmissionForm.totalFees + "</p>";
+        //    htmlcontent += "      <p><strong>Discount %:</strong> " + objaadmissionForm.discount + "%</p>";
+        //    htmlcontent += "       <p><strong>GST:</strong> 18%</p>";
+        //    htmlcontent += "       <p><strong>Fees under GST:</strong> " + objaadmissionForm.feeswithgst + "</p>";
+        //    htmlcontent += "       <p><strong>Total Payable Amount:</strong> " + objaadmissionForm.payableamount + "</p>";
+        //    htmlcontent += "        <p><strong>Type of Payment:</strong> " + objaadmissionForm.paymentType + "</p>";
+        //    htmlcontent += "       <p><strong>Installment Amount and Date:</strong> " + objaadmissionForm.address + "</p>";
+        //    htmlcontent += "       <p><strong>Payment Mode:</strong> " + objaadmissionForm.paymentMode + "</p>";
+        //    htmlcontent += "        <p><strong>Paying Amount:</strong>" + objaadmissionForm.Payingamount + "</p>";
+        //    htmlcontent += "      </div>";
+        //    htmlcontent += "   </div>";
+        //    htmlcontent += "  </div>";
+        //    htmlcontent += "</body>";
+        //    htmlcontent += "</html>";
+
+        //    PdfGenerator.AddPdfPages(document, htmlcontent, PageSize.A4);
+        //    byte[]? response = null;
+        //    using (MemoryStream ms = new MemoryStream())
+        //    {
+        //        document.Save(ms);
+        //        response = ms.ToArray();
+        //    }
+        //    string FileName = "invoice" + ".pdf";
+
+        //    return File(response, "application/pdf", FileName);
+
+
+        //}
 
 
 
@@ -259,7 +343,7 @@ namespace e_learning.Controllers
         [HttpGet]
         public JsonResult Get()
         {
-            string query = @"select * from dbo.admission_details ORDER BY admissionid_pk DESC";
+            string query = @"select * from admission_details a Left join users b on a.admissionid_pk=b.admissionid_pk";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");

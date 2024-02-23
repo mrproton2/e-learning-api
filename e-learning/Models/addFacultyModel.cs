@@ -23,6 +23,10 @@
         public string createddate { get; set; }
         public string createdby { get; set; }
         public string fsubstream { get; set; }
+        public string employee { get; set; }
+
+    
+
 
     }
 }

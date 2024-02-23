@@ -62,16 +62,12 @@ namespace e_learning.Controllers
 
         }
 
+
         [Route("Getsubjects")]
         [HttpGet]
         public JsonResult Get()
-        {
-                string query = @"select abatch.batch_name,
-                    asubject.subjects,
-                    asubstream.sub_stream_name
-                    from addbatch as abatch 
-                    left join addsubject as asubject on abatch.substream_pk=asubject.substream_pk
-                    join addsubstream as asubstream on asubstream.addsubstream_pk=abatch.substream_pk";
+                {
+                string query = @"select * from addsubject;";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
@@ -94,30 +90,30 @@ namespace e_learning.Controllers
 
 
 
-        [Route("subjecttableget")]
-        [HttpGet]
-        public JsonResult GetJson()
-        {
-            string query = @"select * from dbo.addsubject ORDER BY subject_pk DESC";
+        //[Route("subjecttableget")]
+        //[HttpGet]
+        //public JsonResult GetJson()
+        //{
+        //    string query = @"select * from dbo.addsubject ORDER BY subject_pk DESC";
 
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader); ;
+        //    DataTable table = new DataTable();
+        //    string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
+        //    SqlDataReader myReader;
+        //    using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+        //    {
+        //        myCon.Open();
+        //        using (SqlCommand myCommand = new SqlCommand(query, myCon))
+        //        {
+        //            myReader = myCommand.ExecuteReader();
+        //            table.Load(myReader); ;
 
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
+        //            myReader.Close();
+        //            myCon.Close();
+        //        }
+        //    }
 
-            return new JsonResult(table);
-        }
+        //    return new JsonResult(table);
+        //}
 
 
     }

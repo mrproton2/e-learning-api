@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using static PdfSharpCore.Pdf.PdfDictionary;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,7 +29,13 @@ namespace e_learning.Controllers
         [HttpGet]
         public JsonResult Get()
         {
-            string query = @"select * from dbo.addstream ORDER BY addstream_pk DESC";
+            //string query = @"select * from dbo.addstream ORDER BY addstream_pk DESC";
+
+            string query = @"select addstream_pk, stream_name, CONVERT(varchar, creation_date, 105) creation_date,status,createddate,createdby from dbo.addstream ORDER BY addstream_pk DESC";
+
+            ;
+
+
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");

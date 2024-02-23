@@ -1,4 +1,6 @@
-﻿namespace e_learning.Models
+﻿using System.ComponentModel;
+
+namespace e_learning.Models
 {
     public class StudentIDPasswordModel
     {
@@ -40,5 +42,9 @@
         public string offlineCollectedBy { get; set; }
         public string createdby { get; set; }
         public string Payingamount { get; set; }
+        public string idpassflag { get; set; } = "Y";
+        public string RoleID { get; set; } = "2";
+        public string RoleIDParents { get; set; } = "3";
+
     }
 }

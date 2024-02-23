@@ -5,10 +5,11 @@
 
         public int userid { get; set; }
 
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
-        public string Token { get; set; }
+        public string user_name { get; set; }
+        public string user_password { get; set; }
+        public string user_type { get; set; }
+      
+
 
 
 

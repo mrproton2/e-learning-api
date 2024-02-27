@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 
 namespace e_learning.Models
 {
@@ -9,9 +10,9 @@ namespace e_learning.Models
         public string substreamname { get; set; }
         public string batchname { get; set; }
 
-        public List<Subjesubjectdetailsct> testdetails { get; set; }
+        public List<testdetail> testdetails { get; set; }
 
-        public class Subjesubjectdetailsct
+        public class testdetail
         {
             public string subjectname;
             public string facultyname;

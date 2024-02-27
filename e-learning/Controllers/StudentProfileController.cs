@@ -65,19 +65,6 @@ namespace e_learning.Controllers
             using (var connection = new SqlConnection(sqlDataSource))
             {
                 connection.Open();
-
-                //// Check if the user exists
-                //var query = "SELECT COUNT(*) FROM Users WHERE (Username = @UsernameOrEmail OR Email = @UsernameOrEmail)";
-                //using (var command = new SqlCommand(query, connection))
-                //{
-                //    command.Parameters.AddWithValue("@UsernameOrEmail", model.UsernameOrEmail);
-                //    var userCount = (int)command.ExecuteScalar();
-                //    if (userCount == 0)
-                //    {
-                //        return BadRequest("User not found");
-                //    }
-                //}
-
                 // Validate the existing password
                var query = "SELECT user_password FROM users WHERE (user_id = @userid)";
                 using (var command = new SqlCommand(query, connection))

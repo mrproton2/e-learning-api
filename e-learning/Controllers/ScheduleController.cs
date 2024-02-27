@@ -149,7 +149,7 @@ namespace e_learning.Controllers
 
         [Route("chooseddate/{selecteddate}")]
         [HttpGet]
-        public JsonResult LoginGet(string selecteddate)
+        public JsonResult selecteddatebyschedule(string selecteddate)
         {
          
             string query = @"select sch.schedule_id,sch.substreamname,sch.batchname,sch.subjectname,
@@ -213,6 +213,95 @@ namespace e_learning.Controllers
             return new JsonResult(table);
         }
 
+        [Route("scheduleforclasspanel")]
+        [HttpGet]
+        public JsonResult scheduleforclasspanel()
+        {
+            string query = @"select sch.schedule_id,CONVERT(varchar, sch.dateoflecture, 105)dateoflecture,concat(sch.startTime,' ',sch.endTime)Timing,sch.notice,addsub.subjects,
+                            addfac.name,ab.batch_name 
+							from schedule as sch  
+                            left join addsubject as addsub
+                            on sch.subjectname=addsub.subject_pk
+                            left join addfaculty as addfac
+                            on sch.facultyname=addfac.add_faculty_pk
+							left join addbatch as ab
+							on sch.batchname=ab.addbatch_pk
+                            where sch.dateoflecture >= GETDATE() ORDER BY sch.dateoflecture ASC";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader); ;
+
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+            return new JsonResult(table);
+        }
+
+
+        [HttpDelete("{scheduleDeletedbyclass}")]
+        public JsonResult scheduleDeletedbyclass(int scheduleDeletedbyclass)
+        {
+            string query = @"delete from dbo.schedule where schedule_id  = " + scheduleDeletedbyclass + @" ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader); ;
+
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+            return new JsonResult("Deleted Successfully");
+        }
+
+
+        [Route("oldscheduleforclasspanel")]
+        [HttpGet]
+        public JsonResult oldscheduleforclasspanel()
+        {
+            string query = @"select sch.schedule_id,CONVERT(varchar, sch.dateoflecture, 105)dateoflecture,concat(sch.startTime,' ',sch.endTime)Timing,sch.notice,addsub.subjects,
+                            addfac.name,ab.batch_name 
+							from schedule as sch  
+                            left join addsubject as addsub
+                            on sch.subjectname=addsub.subject_pk
+                            left join addfaculty as addfac
+                            on sch.facultyname=addfac.add_faculty_pk
+							left join addbatch as ab
+							on sch.batchname=ab.addbatch_pk
+                            where sch.dateoflecture < GETDATE() ORDER BY sch.dateoflecture ASC";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("ElearningAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader); ;
+
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+            return new JsonResult(table);
+        }
 
     }
 }
